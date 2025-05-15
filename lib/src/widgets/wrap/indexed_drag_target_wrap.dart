@@ -39,6 +39,20 @@ class _IndexedDragTargetWrapState<T extends Object>
   }
 
   @override
+  void didUpdateWidget(covariant IndexedDragTargetWrap<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    final didChangeLength = oldWidget.children.length != widget.children.length;
+    final didChangeCount = oldWidget.count != widget.count;
+
+    if (didChangeLength || didChangeCount) {
+      keys.clear();
+      keys.addAll(generateKeys(getNumIndicators()));
+      setState(() {});
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final numRows = getNumRows();
 
