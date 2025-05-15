@@ -12,6 +12,8 @@ class IndexedDragTargetWrap<T extends Object> extends StatefulWidget {
     this.onWillAccept,
     this.spacing = 0.0,
     this.runSpacing = 0.0,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+    this.mainAxisSize = MainAxisSize.min,
   });
 
   final List<Widget> children;
@@ -20,6 +22,8 @@ class IndexedDragTargetWrap<T extends Object> extends StatefulWidget {
   final OnWillAcceptCallback<T>? onWillAccept;
   final double spacing;
   final double runSpacing;
+  final MainAxisAlignment mainAxisAlignment;
+  final MainAxisSize mainAxisSize;
 
   @override
   State<IndexedDragTargetWrap<T>> createState() =>
@@ -63,6 +67,8 @@ class _IndexedDragTargetWrapState<T extends Object>
       builder: (context, candidates, rejects) {
         return Column(
           spacing: widget.runSpacing,
+          mainAxisAlignment: widget.mainAxisAlignment,
+          mainAxisSize: widget.mainAxisSize,
           children: [
             for (var i = 0; i < numRows; i++) ...[
               Builder(

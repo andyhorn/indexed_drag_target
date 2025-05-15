@@ -26,10 +26,11 @@ class _MainAppState extends State<MainApp> {
             children: [
               Expanded(
                 child: IndexedDragTargetIndicatorTheme(
-                  child: IndexedDragTargetColumn<String>(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                  child: IndexedDragTargetWrap<String>(
                     mainAxisSize: MainAxisSize.max,
+                    count: 3,
                     spacing: 4,
+                    runSpacing: 4,
                     children:
                         children
                             .map(
