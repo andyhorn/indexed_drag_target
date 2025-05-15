@@ -13,8 +13,8 @@ class IndexedDragTargetWrap<T extends Object> extends StatefulWidget {
 
   final List<Widget> children;
   final int count;
-  final OnAcceptCallback onAccept;
-  final OnWillAcceptCallback? onWillAccept;
+  final OnAcceptCallback<T> onAccept;
+  final OnWillAcceptCallback<T>? onWillAccept;
 
   @override
   State<IndexedDragTargetWrap<T>> createState() =>
