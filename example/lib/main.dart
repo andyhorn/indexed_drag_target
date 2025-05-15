@@ -1,3 +1,5 @@
+import 'dart:math' show Point;
+
 import 'package:flutter/material.dart';
 import 'package:indexed_drag_target/indexed_drag_target.dart';
 
@@ -13,7 +15,11 @@ class MainApp extends StatefulWidget {
 }
 
 class _MainAppState extends State<MainApp> {
-  final children = <String>[];
+  final List<List<String?>> children = [
+    ['a', null, 'b'],
+    [null, null, 'c'],
+    [null, null, null],
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -25,42 +31,32 @@ class _MainAppState extends State<MainApp> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Expanded(
-                child: IndexedDragTargetIndicatorTheme(
-                  child: IndexedDragTargetWrap<String>(
-                    mainAxisSize: MainAxisSize.max,
-                    count: 3,
-                    spacing: 4,
-                    runSpacing: 4,
-                    children:
-                        children
-                            .map(
-                              (id) => Container(
-                                margin: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                ),
-                                padding: const EdgeInsets.all(8),
+                child: IndexedDragTargetSlotIndicatorTheme(
+                  borderRadius: BorderRadius.circular(4),
+                  color: Colors.orange,
+                  child: IndexedDragTargetGrid<String>(
+                    columns: 3,
+                    rows: 3,
+                    children: [
+                      for (var i = 0; i < children.length; i++) ...[
+                        for (var j = 0; j < children[i].length; j++) ...[
+                          if (children[i][j] != null) ...[
+                            IndexedDragTargetGridEntry(
+                              point: Point(i, j),
+                              child: Container(
                                 color: Colors.blue.shade700,
                                 child: Text(
-                                  id,
+                                  children[i][j] ?? '',
                                   style: TextStyle(color: Colors.white),
                                 ),
                               ),
-                            )
-                            .toList(),
-                    onAccept: (id, index) {
-                      final newItems = [...children];
-                      final previousIndex = newItems.indexOf(id);
-
-                      newItems.insert(index, id);
-
-                      if (previousIndex != -1) {
-                        newItems.removeAt(
-                          previousIndex + (previousIndex < index ? 0 : 1),
-                        );
-                      }
-
-                      children.clear();
-                      children.addAll(newItems);
+                            ),
+                          ],
+                        ],
+                      ],
+                    ],
+                    onAccept: (id, point) {
+                      children[point.x.toInt()][point.y.toInt()] = id;
                       setState(() {});
                     },
                   ),
@@ -70,7 +66,9 @@ class _MainAppState extends State<MainApp> {
               Row(
                 children: [
                   for (var i = 0; i < 5; i++) ...[
-                    if (!children.contains('item_$i')) ...[
+                    if (!children.any(
+                      (list) => list.contains('${i ~/ 3}-${i % 3}'),
+                    )) ...[
                       Draggable<String>(
                         data: 'item_$i',
                         feedback: Container(
