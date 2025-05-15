@@ -1,8 +1,7 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:indexed_drag_target/src/indexed_drag_target_indicator.dart';
+import 'package:indexed_drag_target/src/shared/mixin.dart';
 import 'package:indexed_drag_target/src/shared/shared.dart';
 
 class IndexedDragTargetFlex<T extends Object> extends StatefulWidget {
@@ -41,8 +40,11 @@ class IndexedDragTargetFlex<T extends Object> extends StatefulWidget {
 }
 
 class _IndexedDragTargetFlexState<T extends Object>
-    extends State<IndexedDragTargetFlex<T>> {
+    extends State<IndexedDragTargetFlex<T>>
+    with DragTargetUtilityMixin {
+  @override
   final keys = <GlobalKey>[];
+
   int? index;
 
   @override
@@ -65,10 +67,6 @@ class _IndexedDragTargetFlexState<T extends Object>
 
   int getNumIndicators() {
     return widget.children.length + 1;
-  }
-
-  Iterable<GlobalKey> generateKeys(int numKeys) {
-    return List<GlobalKey>.generate(numKeys, (_) => GlobalKey());
   }
 
   @override
@@ -131,56 +129,5 @@ class _IndexedDragTargetFlexState<T extends Object>
       },
       onLeave: (_) => setState(() => index = null),
     );
-  }
-
-  int getIndicatorIndex(Offset position) {
-    final distances = [
-      for (var i = 0; i < keys.length; i++) ...[
-        (index: i, distance: getDistanceToIndicator(position, keys[i])),
-      ],
-    ];
-
-    final nearestIndicator = distances.reduce(
-      (a, b) => a.distance < b.distance ? a : b,
-    );
-
-    return nearestIndicator.index;
-  }
-
-  double getDistanceToIndicator(Offset offset, GlobalKey key) {
-    final keyPosition = getPosition(key);
-
-    if (keyPosition == null) {
-      return double.infinity;
-    }
-
-    final distance = getDistance(
-      x1: offset.dx,
-      x2: keyPosition.dx,
-      y1: offset.dy,
-      y2: keyPosition.dy,
-    );
-
-    return distance;
-  }
-
-  Offset? getPosition(GlobalKey key) {
-    final box = key.currentContext?.findRenderObject() as RenderBox?;
-
-    if (box == null) {
-      return null;
-    }
-
-    final position = box.localToGlobal(Offset.zero);
-    return position;
-  }
-
-  double getDistance({
-    required double x1,
-    required double y1,
-    required double x2,
-    required double y2,
-  }) {
-    return sqrt(pow(x2 - x1, 2) + pow(y2 - y1, 2));
   }
 }
