@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:indexed_drag_target/src/shared/shared.dart';
 import 'package:indexed_drag_target/src/widgets/indexed_drag_target_indicator.dart';
+import 'package:indexed_drag_target/src/widgets/wrap/row_indices.dart';
 
 class IndexedDragTargetWrap<T extends Object> extends StatefulWidget {
   const IndexedDragTargetWrap({
@@ -9,12 +10,16 @@ class IndexedDragTargetWrap<T extends Object> extends StatefulWidget {
     required this.count,
     required this.onAccept,
     this.onWillAccept,
+    this.spacing = 0.0,
+    this.runSpacing = 0.0,
   });
 
   final List<Widget> children;
   final int count;
   final OnAcceptCallback<T> onAccept;
   final OnWillAcceptCallback<T>? onWillAccept;
+  final double spacing;
+  final double runSpacing;
 
   @override
   State<IndexedDragTargetWrap<T>> createState() =>
@@ -59,40 +64,39 @@ class _IndexedDragTargetWrapState<T extends Object>
     return DragTarget<T>(
       builder: (context, candidates, rejects) {
         return Column(
+          spacing: widget.runSpacing,
           children: [
             for (var i = 0; i < numRows; i++) ...[
-              IntrinsicHeight(
-                child: Builder(
-                  builder: (context) {
-                    final rowIndex = i * (widget.count + 1);
-                    int getChildIndex(int i, int j) =>
-                        i * (widget.count + 1) + j + 1;
+              Builder(
+                builder: (context) {
+                  final indices = RowIndices(row: i, count: widget.count);
 
-                    return Row(
+                  return IntrinsicHeight(
+                    child: Row(
+                      spacing: widget.spacing / 2,
                       children: [
                         IndexedDragTargetIndicator(
-                          key: keys[rowIndex],
-                          visible: index == rowIndex,
+                          key: keys[indices.firstIndicator()],
+                          visible: index == indices.firstIndicator(),
                           direction: Axis.horizontal,
                         ),
                         for (var j = 0; j < widget.count; j++) ...[
                           if (i * widget.count + j < length) ...[
-                            Expanded(
-                              child: widget.children[getChildIndex(i, j)],
-                            ),
+                            Expanded(child: widget.children[indices.child(j)]),
                             IndexedDragTargetIndicator(
-                              key: keys[getChildIndex(i, j)],
-                              visible: index == getChildIndex(i, j),
+                              key: keys[indices.indicator(j)],
+                              visible: index == indices.indicator(j),
                               direction: Axis.horizontal,
                             ),
                           ] else ...[
                             const Expanded(child: SizedBox.shrink()),
+                            const SizedBox.shrink(),
                           ],
                         ],
                       ],
-                    );
-                  },
-                ),
+                    ),
+                  );
+                },
               ),
             ],
           ],
@@ -129,15 +133,19 @@ class _IndexedDragTargetWrapState<T extends Object>
     );
   }
 
+  int getNumIndicators() {
+    return widget.children.length + getNumRows();
+  }
+
   int getNumRows() {
+    if (widget.children.isEmpty) {
+      return 1;
+    }
+
     final fullRows = widget.children.length ~/ widget.count;
     final remainder = widget.children.length % widget.count;
 
     return fullRows + (remainder == 0 ? 0 : 1);
-  }
-
-  int getNumIndicators() {
-    return widget.children.length + getNumRows();
   }
 
   int? getAdjustedIndex() {
