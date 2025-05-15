@@ -27,9 +27,7 @@ class IndexedDragTargetWrap<T extends Object> extends StatefulWidget {
 }
 
 class _IndexedDragTargetWrapState<T extends Object>
-    extends State<IndexedDragTargetWrap<T>>
-    with DragTargetUtilityMixin {
-  @override
+    extends State<IndexedDragTargetWrap<T>> {
   final keys = <GlobalKey>[];
 
   int? index;
@@ -104,7 +102,7 @@ class _IndexedDragTargetWrapState<T extends Object>
       },
       onMove: (details) {
         final data = details.data;
-        final index = getIndicatorIndex(details.offset);
+        final index = getIndexOfClosestKey(keys, details.offset);
 
         if (widget.onWillAccept case final onWillAccept?) {
           if (!onWillAccept(data, index)) {

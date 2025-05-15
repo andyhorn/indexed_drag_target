@@ -39,9 +39,7 @@ class IndexedDragTargetFlex<T extends Object> extends StatefulWidget {
 }
 
 class _IndexedDragTargetFlexState<T extends Object>
-    extends State<IndexedDragTargetFlex<T>>
-    with DragTargetUtilityMixin {
-  @override
+    extends State<IndexedDragTargetFlex<T>> {
   final keys = <GlobalKey>[];
 
   int? index;
@@ -105,7 +103,7 @@ class _IndexedDragTargetFlexState<T extends Object>
         };
       },
       onMove: (details) {
-        final index = getIndicatorIndex(details.offset);
+        final index = getIndexOfClosestKey(keys, details.offset);
         setState(() => this.index = index);
       },
       onAcceptWithDetails: (details) {
