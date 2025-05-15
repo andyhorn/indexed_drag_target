@@ -16,12 +16,6 @@ class _MainAppState extends State<MainApp> {
   final children = <String>[];
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(

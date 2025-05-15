@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:indexed_drag_target/src/indexed_drag_target_indicator.dart';
-import 'package:indexed_drag_target/src/shared/mixin.dart';
 import 'package:indexed_drag_target/src/shared/shared.dart';
+import 'package:indexed_drag_target/src/widgets/indexed_drag_target_indicator.dart';
 
 class IndexedDragTargetFlex<T extends Object> extends StatefulWidget {
   const IndexedDragTargetFlex({
