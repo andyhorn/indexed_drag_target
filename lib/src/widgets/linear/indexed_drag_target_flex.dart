@@ -47,7 +47,6 @@ class _IndexedDragTargetFlexState<T extends Object>
   @override
   void initState() {
     super.initState();
-
     keys.addAll(generateKeys(getNumIndicators()));
   }
 
@@ -103,7 +102,15 @@ class _IndexedDragTargetFlexState<T extends Object>
         };
       },
       onMove: (details) {
-        final index = getIndexOfClosestKey(keys, details.offset);
+        final DragTargetDetails(:data, :offset) = details;
+        final index = getIndexOfClosestKey(keys, offset);
+
+        if (widget.onWillAccept case final onWillAccept?) {
+          if (!onWillAccept(data, index)) {
+            return;
+          }
+        }
+
         setState(() => this.index = index);
       },
       onAcceptWithDetails: (details) {

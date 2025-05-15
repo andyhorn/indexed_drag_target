@@ -1,3 +1,5 @@
+import 'dart:math' show max;
+
 import 'package:flutter/widgets.dart';
 import 'package:indexed_drag_target/src/shared/shared.dart';
 import 'package:indexed_drag_target/src/widgets/indexed_drag_target_indicator.dart';
@@ -36,12 +38,9 @@ class _IndexedDragTargetWrapState<T extends Object>
 
   int? index;
 
-  int get length => widget.children.length;
-
   @override
   void initState() {
     super.initState();
-
     keys.addAll(generateKeys(getNumIndicators()));
   }
 
@@ -61,7 +60,10 @@ class _IndexedDragTargetWrapState<T extends Object>
 
   @override
   Widget build(BuildContext context) {
-    final numRows = getNumRows();
+    final numRows = getNumberOfSets(
+      itemCount: widget.children.length,
+      setSize: widget.count,
+    );
 
     return DragTarget<T>(
       builder: (context, candidates, rejects) {
@@ -85,7 +87,7 @@ class _IndexedDragTargetWrapState<T extends Object>
                           direction: Axis.horizontal,
                         ),
                         for (var j = 0; j < widget.count; j++) ...[
-                          if (i * widget.count + j < length) ...[
+                          if (hasChildAtIndex(i: i, j: j)) ...[
                             Expanded(child: widget.children[indices.child(j)]),
                             IndexedDragTargetIndicator(
                               key: keys[indices.indicator(j)],
@@ -107,8 +109,8 @@ class _IndexedDragTargetWrapState<T extends Object>
         );
       },
       onMove: (details) {
-        final data = details.data;
-        final index = getIndexOfClosestKey(keys, details.offset);
+        final DragTargetDetails(:data, :offset) = details;
+        final index = getIndexOfClosestKey(keys, offset);
 
         if (widget.onWillAccept case final onWillAccept?) {
           if (!onWillAccept(data, index)) {
@@ -138,18 +140,17 @@ class _IndexedDragTargetWrapState<T extends Object>
   }
 
   int getNumIndicators() {
-    return widget.children.length + getNumRows();
+    final numSets = getNumberOfSets(
+      itemCount: widget.children.length,
+      setSize: widget.count,
+    );
+
+    return widget.children.length + max(numSets, 1);
   }
 
-  int getNumRows() {
-    if (widget.children.isEmpty) {
-      return 1;
-    }
-
-    final fullRows = widget.children.length ~/ widget.count;
-    final remainder = widget.children.length % widget.count;
-
-    return fullRows + (remainder == 0 ? 0 : 1);
+  bool hasChildAtIndex({required int i, required int j}) {
+    final index = getGridIndex(row: i, column: j, width: widget.count);
+    return index < widget.children.length;
   }
 
   int? getAdjustedIndex() {

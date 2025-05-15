@@ -6,6 +6,21 @@ Iterable<GlobalKey> generateKeys(int numKeys) {
   return List<GlobalKey>.generate(numKeys, (_) => GlobalKey());
 }
 
+int getNumberOfSets({required int itemCount, required int setSize}) {
+  if (itemCount == 0) {
+    return 0;
+  }
+
+  final fullSets = itemCount ~/ setSize;
+  final remainder = itemCount % setSize;
+
+  return fullSets + (remainder == 0 ? 0 : 1);
+}
+
+int getGridIndex({required int row, required int column, required width}) {
+  return (row * width + column).toInt();
+}
+
 int getIndexOfClosestKey(List<GlobalKey> keys, Offset offset) {
   final distances = [
     for (var i = 0; i < keys.length; i++) ...[
