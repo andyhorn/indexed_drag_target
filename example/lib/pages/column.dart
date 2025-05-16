@@ -4,14 +4,14 @@ import 'package:example/widgets/selected_item.dart';
 import 'package:flutter/material.dart';
 import 'package:indexed_drag_target/indexed_drag_target.dart';
 
-class RowPage extends StatefulWidget {
-  const RowPage({super.key});
+class ColumnPage extends StatefulWidget {
+  const ColumnPage({super.key});
 
   @override
-  State<RowPage> createState() => _RowPageState();
+  State<ColumnPage> createState() => _ColumnPageState();
 }
 
-class _RowPageState extends State<RowPage> {
+class _ColumnPageState extends State<ColumnPage> {
   final ids = List.generate(5, (i) => 'item_$i');
   final selected = <String>[];
 
@@ -19,7 +19,7 @@ class _RowPageState extends State<RowPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Row'),
+        title: const Text('Column'),
         actions: [
           IconButton(
             icon: Icon(Icons.refresh),
@@ -33,11 +33,40 @@ class _RowPageState extends State<RowPage> {
       drawer: const AppDrawer(),
       body: SafeArea(
         minimum: const EdgeInsets.all(8),
-        child: Column(
+        child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            SizedBox(
+              width: 126,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text('Drag these items to the space to the right.'),
+                  const SizedBox(height: 12),
+                  if (ids.every(selected.contains)) ...[
+                    Expanded(
+                      child: Center(
+                        child: Text(
+                          'No items remaining',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ),
+                    ),
+                  ] else ...[
+                    for (final id in ids) ...[
+                      if (!selected.contains(id)) ...[
+                        DraggableItem(id: id),
+                        const SizedBox(height: 6),
+                      ],
+                    ],
+                  ],
+                ],
+              ),
+            ),
+            const SizedBox(width: 12),
             Expanded(
-              child: IndexedDragTargetRow<String>(
+              child: IndexedDragTargetColumn<String>(
                 spacing: 6,
                 onAccept: (id, index) {
                   final newList = [...selected];
@@ -58,29 +87,6 @@ class _RowPageState extends State<RowPage> {
                 },
                 children: [
                   for (final id in selected) ...[SelectedItem(id: id)],
-                ],
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              child: Text('Drag these items to the space above.'),
-            ),
-            SizedBox(
-              height: 48,
-              child: Row(
-                children: [
-                  if (ids.every(selected.contains)) ...[
-                    Expanded(
-                      child: Text(
-                        'No items remaining.',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ),
-                  ],
-                  for (final id in ids) ...[
-                    if (!selected.contains(id)) ...[DraggableItem(id: id)],
-                  ],
                 ],
               ),
             ),

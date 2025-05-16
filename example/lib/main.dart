@@ -1,3 +1,4 @@
+import 'package:example/pages/column.dart';
 import 'package:example/pages/row.dart';
 import 'package:flutter/material.dart';
 
@@ -23,8 +24,11 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/row',
-      routes: {'/row': (context) => const RowPage()},
+      initialRoute: '/column',
+      routes: {
+        '/row': (context) => const RowPage(),
+        '/column': (context) => const ColumnPage(),
+      },
 
       // home: Scaffold(
       //   body: SafeArea(
