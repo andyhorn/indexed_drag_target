@@ -149,7 +149,8 @@ class _IndexedDragTargetWrapState<T extends Object>
   }
 
   bool hasChildAtIndex({required int i, required int j}) {
-    final index = getGridIndex(row: i, column: j, width: widget.count);
+    final index = flatten2DIndex(y: i, x: j, width: widget.count);
+
     return index < widget.children.length;
   }
 

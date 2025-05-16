@@ -17,8 +17,8 @@ int getNumberOfSets({required int itemCount, required int setSize}) {
   return fullSets + (remainder == 0 ? 0 : 1);
 }
 
-int getGridIndex({required int row, required int column, required width}) {
-  return (row * width + column).toInt();
+int flatten2DIndex({required int y, required int x, required width}) {
+  return (y * width + x).toInt();
 }
 
 int getIndexOfClosestKey(List<GlobalKey> keys, Offset offset) {

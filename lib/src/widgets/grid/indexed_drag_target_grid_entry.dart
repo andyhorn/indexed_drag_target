@@ -7,4 +7,8 @@ final class IndexedDragTargetGridEntry {
 
   final Point point;
   final Widget child;
+
+  int getArrayIndex(int gridWidth) {
+    return (point.y.toInt() * gridWidth) + point.x.toInt();
+  }
 }

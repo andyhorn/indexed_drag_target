@@ -89,13 +89,8 @@ class _IndexedDragTargetGridState<T extends Object>
           DragTarget<T>(
             builder: (context, candidates, rejects) {
               final index = widget.children.indexWhere((entry) {
-                final gridIndex = getGridIndex(
-                  column: entry.point.x.toInt(),
-                  row: entry.point.y.toInt(),
-                  width: widget.columns,
-                );
-
-                return gridIndex == i;
+                final arrayIndex = entry.getArrayIndex(widget.columns);
+                return arrayIndex == i;
               });
 
               if (index != -1) {
@@ -135,6 +130,7 @@ class _IndexedDragTargetGridState<T extends Object>
                 }
 
                 widget.onAccept(data, point);
+                setIndex(null);
               }
             },
           ),

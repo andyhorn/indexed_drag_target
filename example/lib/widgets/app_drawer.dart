@@ -19,6 +19,10 @@ class AppDrawer extends StatelessWidget {
               onTap:
                   () => Navigator.of(context).pushReplacementNamed('/column'),
             ),
+            ListTile(
+              title: const Text('Grid Example'),
+              onTap: () => Navigator.of(context).pushReplacementNamed('/grid'),
+            ),
           ],
         ),
       ),
