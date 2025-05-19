@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:example/widgets/app_drawer.dart';
 import 'package:example/widgets/draggable_item.dart';
 import 'package:example/widgets/selected_item.dart';
@@ -14,34 +12,21 @@ class GridPage extends StatefulWidget {
 }
 
 class _GridPageState extends State<GridPage> {
-  final List<List<String?>> children = [
-    ['item_1', null, 'item_2'],
-    [null, null, 'item_3'],
-    [null, 'item_4', null],
+  final children = [
+    'item_1',
+    null,
+    'item_2',
+    null,
+    null,
+    'item_3',
+    null,
+    'item_4',
+    null,
   ];
-
-  bool isSelected(String? id) => children.any((list) => list.contains(id));
 
   @override
   Widget build(BuildContext context) {
-    final entries = <IndexedDragTargetGridEntry>[];
-
-    for (var row = 0; row < children.length; row++) {
-      for (var column = 0; column < children.first.length; column++) {
-        if (children[row][column] case final id?) {
-          entries.add(
-            IndexedDragTargetGridEntry(
-              point: Point(column, row),
-              child: SelectedItem(id: id),
-            ),
-          );
-        }
-      }
-    }
-
-    final allSelected = children.every(
-      (list) => list.every((id) => id != null),
-    );
+    final allSelected = children.every((id) => id != null);
 
     return Scaffold(
       appBar: AppBar(
@@ -50,11 +35,7 @@ class _GridPageState extends State<GridPage> {
           IconButton(
             icon: Icon(Icons.refresh),
             onPressed: () {
-              for (final list in children) {
-                list.clear();
-                list.addAll([null, null, null]);
-              }
-
+              children.setAll(0, List.generate(9, (_) => null));
               setState(() {});
             },
           ),
@@ -67,17 +48,28 @@ class _GridPageState extends State<GridPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Expanded(
-              child: IndexedDragTargetSlotIndicatorTheme(
-                borderRadius: BorderRadius.circular(4),
-                color: Colors.orange,
+              child: IndexedDragTargetGridCellTheme(
+                border: TableBorder.symmetric(
+                  inside: BorderSide(width: 1),
+                  outside: BorderSide(width: 2),
+                ),
                 child: IndexedDragTargetGrid<String>(
-                  columns: 3,
+                  crossAxisCount: 3,
                   rows: 3,
-                  onAccept: (id, point) {
-                    children[point.y.toInt()][point.x.toInt()] = id;
+                  hoverBuilder: defaultIndicatorBuilder,
+                  onAccept: (id, index) {
+                    children[index] = id;
                     setState(() {});
                   },
-                  children: entries,
+                  children: [
+                    for (var i = 0; i < children.length; i++) ...[
+                      if (children[i] case final id?) ...[
+                        SelectedItem(id: id),
+                      ] else ...[
+                        null,
+                      ],
+                    ],
+                  ],
                 ),
               ),
             ),
@@ -95,12 +87,8 @@ class _GridPageState extends State<GridPage> {
                       ),
                     ),
                   ],
-                  for (
-                    var i = 0;
-                    i < children.length * children.first.length;
-                    i++
-                  ) ...[
-                    if (!isSelected('item_$i')) ...[
+                  for (var i = 0; i < children.length; i++) ...[
+                    if (!children.contains('item_$i')) ...[
                       DraggableItem(id: 'item_$i'),
                     ],
                   ],
