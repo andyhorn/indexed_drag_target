@@ -180,6 +180,12 @@ class _Target<T extends Object> extends StatelessWidget {
         }
 
         final indicator = hoverBuilder.call(context);
+
+        // if there is no child, display the indicator
+        if (child == null) {
+          return indicator ?? const SizedBox.shrink();
+        }
+
         return getWidgetForIndicatorStrategy(
           child: child,
           indicator: indicator,
