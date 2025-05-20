@@ -56,7 +56,7 @@ class _GridPageState extends State<GridPage> {
                 child: IndexedDragTargetGrid<String>(
                   crossAxisCount: 3,
                   rows: 3,
-                  hoverBuilder: defaultIndicatorBuilder,
+                  indicatorBuilder: defaultIndicatorBuilder,
                   onAccept: (id, index) {
                     children[index] = id;
                     setState(() {});

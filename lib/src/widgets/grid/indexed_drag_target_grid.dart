@@ -9,7 +9,7 @@ class IndexedDragTargetGrid<T extends Object> extends StatefulWidget {
   const IndexedDragTargetGrid({
     super.key,
     required this.children,
-    this.hoverBuilder,
+    this.indicatorBuilder,
     this.indicatorStrategy = IndexedDragTargetGridIndicatorStrategy.hide,
     required this.crossAxisCount,
     required this.onAccept,
@@ -33,7 +33,7 @@ class IndexedDragTargetGrid<T extends Object> extends StatefulWidget {
   });
 
   final List<Widget?> children;
-  final Widget? Function(BuildContext context, int index)? hoverBuilder;
+  final IndicatorBuilder? indicatorBuilder;
   final IndexedDragTargetGridIndicatorStrategy indicatorStrategy;
   final int crossAxisCount;
   final OnAcceptCallback<T> onAccept;
@@ -93,7 +93,7 @@ class _IndexedDragTargetGridState<T extends Object>
             builder: (context) {
               final target = _Target<T>(
                 hoverBuilder:
-                    (context) => widget.hoverBuilder?.call(context, i),
+                    (context) => widget.indicatorBuilder?.call(context, i),
                 indicatorStrategy: widget.indicatorStrategy,
                 onAccept: (data) {
                   widget.onAccept(data, i);
